@@ -28,8 +28,12 @@ parser.add_argument("--push_forces", type=float, nargs="+", default=[0, 100, 200
 parser.add_argument("--push_seed", type=int, default=None)
 parser.add_argument(
     "--phase_vel_x", type=float, nargs="+", default=None,
-    help="Forward velocity (m/s) to command each phase. Same count as --push_forces. "
-         "E.g. --phase_vel_x 0.8 0.5 0.5 0.5  → fast walk in phase 0, normal in rest.",
+    help="Forward velocity (m/s) to command each phase. Same count as --push_forces.",
+)
+parser.add_argument(
+    "--phase_interval", type=float, nargs="+", default=None,
+    help="Push interval (s) per phase. Same count as --push_forces. "
+         "E.g. --phase_interval 2 2 5 5  → 2s for phases 0-1, 5s for phases 2-3.",
 )
 cli_args.add_rsl_rl_args(parser)
 AppLauncher.add_app_launcher_args(parser)
@@ -146,8 +150,16 @@ def main():
     phase_forces = args_cli.push_forces
     num_phases = len(phase_forces)
     steps_per_phase = max(1, int(round(args_cli.phase_duration / dt)))
-    steps_between_pushes = max(1, int(round(args_cli.push_interval / dt)))
     steps_per_push = max(1, int(round(args_cli.push_duration / dt)))
+
+    # per-phase push intervals (falls back to --push_interval if not specified)
+    phase_interval = args_cli.phase_interval
+    if phase_interval is not None and len(phase_interval) != num_phases:
+        raise ValueError(f"--phase_interval must have {num_phases} values, got {len(phase_interval)}")
+    steps_between_pushes_per_phase = [
+        max(1, int(round((phase_interval[i] if phase_interval else args_cli.push_interval) / dt)))
+        for i in range(num_phases)
+    ]
 
     zeros_force = torch.zeros(num_envs, len(body_ids), 3, device=device)
     zeros_torque = torch.zeros(num_envs, len(body_ids), 3, device=device)
@@ -199,7 +211,7 @@ def main():
 
         # --- push trigger ---
         step_in_phase = step_idx % steps_per_phase
-        if force_magnitude > 0 and step_in_phase % steps_between_pushes == 0:
+        if force_magnitude > 0 and step_in_phase % steps_between_pushes_per_phase[phase] == 0:
             f = torch.rand(num_envs, len(body_ids), 3, generator=rng, device=device) * 2.0 - 1.0
             # only horizontal (x, y)
             f[:, :, 2] = 0.0
