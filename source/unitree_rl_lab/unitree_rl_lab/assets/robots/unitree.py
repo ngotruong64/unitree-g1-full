@@ -17,7 +17,7 @@ from isaaclab.utils import configclass
 
 from unitree_rl_lab.assets.robots import unitree_actuators
 
-UNITREE_ROS_DIR = os.path.join(os.path.dirname(__file__), "../../../../../../../../robot_assets")
+UNITREE_ROS_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "../../../../../robot_assets"))
 
 
 @configclass
