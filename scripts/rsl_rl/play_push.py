@@ -65,6 +65,16 @@ import time
 import torch
 from packaging.version import parse as _parse_version
 
+
+def _set_wrench(robot, forces, torques, body_ids, device):
+    """Apply wrench using the non-deprecated WrenchComposer API."""
+    body_ids_t = torch.tensor(body_ids, dtype=torch.int32, device=device)
+    robot.permanent_wrench_composer.set_forces_and_torques(
+        forces=forces,
+        torques=torques,
+        body_ids=body_ids_t,
+    )
+
 from rsl_rl.runners import OnPolicyRunner
 
 import isaaclab_tasks  # noqa: F401
@@ -209,10 +219,10 @@ def main():
 
         # apply (or clear) external wrench
         if push_remaining_steps > 0:
-            robot.set_external_force_and_torque(current_force, current_torque, body_ids=body_ids)
+            _set_wrench(robot, current_force, current_torque, body_ids, device)
             push_remaining_steps -= 1
         else:
-            robot.set_external_force_and_torque(zeros_force, zeros_torque, body_ids=body_ids)
+            _set_wrench(robot, zeros_force, zeros_torque, body_ids, device)
 
         with torch.inference_mode():
             actions = policy(obs)

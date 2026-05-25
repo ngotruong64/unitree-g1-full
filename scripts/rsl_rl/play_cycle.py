@@ -64,6 +64,16 @@ from isaaclab_tasks.utils import get_checkpoint_path
 import unitree_rl_lab.tasks  # noqa: F401
 from unitree_rl_lab.utils.parser_cfg import parse_env_cfg
 
+
+def _set_wrench(robot, forces, torques, body_ids, device):
+    """Apply wrench using the non-deprecated WrenchComposer API."""
+    body_ids_t = torch.tensor(body_ids, dtype=torch.int32, device=device)
+    robot.permanent_wrench_composer.set_forces_and_torques(
+        forces=forces,
+        torques=torques,
+        body_ids=body_ids_t,
+    )
+
 PHASE_COLORS = ["\033[92m", "\033[93m", "\033[33m", "\033[91m"]  # green, yellow, orange, red
 RESET = "\033[0m"
 
@@ -201,10 +211,10 @@ def main():
 
         # --- apply force ---
         if push_remaining > 0 and force_magnitude > 0:
-            robot.set_external_force_and_torque(current_force, zeros_torque, body_ids=body_ids)
+            _set_wrench(robot, current_force, zeros_torque, body_ids, device)
             push_remaining -= 1
         else:
-            robot.set_external_force_and_torque(zeros_force, zeros_torque, body_ids=body_ids)
+            _set_wrench(robot, zeros_force, zeros_torque, body_ids, device)
 
         with torch.inference_mode():
             actions = policy(obs)
