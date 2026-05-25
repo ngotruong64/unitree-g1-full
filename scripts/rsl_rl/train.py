@@ -164,10 +164,10 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # save resume path before creating a new log_dir
     if agent_cfg.resume or agent_cfg.algorithm.class_name == "Distillation":
-        if agent_cfg.load_checkpoint and os.path.isabs(agent_cfg.load_checkpoint) and os.path.isfile(
-            agent_cfg.load_checkpoint
-        ):
-            resume_path = agent_cfg.load_checkpoint
+        _ckpt = agent_cfg.load_checkpoint
+        _ckpt_abs = os.path.abspath(_ckpt) if _ckpt else None
+        if _ckpt and _ckpt_abs and os.path.isfile(_ckpt_abs):
+            resume_path = _ckpt_abs
         else:
             resume_path = get_checkpoint_path(log_root_path, agent_cfg.load_run, agent_cfg.load_checkpoint)
 
