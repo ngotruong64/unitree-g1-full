@@ -1,8 +1,8 @@
 """Play a checkpoint with a cyclic push schedule:
   Phase 0 (10s): no push
   Phase 1 (10s): push 100 N
-  Phase 2 (10s): push 200 N
-  Phase 3 (10s): push 300 N
+  Phase 2 (10s): push 170 N
+  Phase 3 (10s): push 260 N
   → repeat
 """
 
@@ -23,8 +23,8 @@ parser.add_argument("--push_body", type=str, default="torso_link")
 parser.add_argument("--push_interval", type=float, default=2.0, help="Seconds between pushes within an active phase.")
 parser.add_argument("--push_duration", type=float, default=0.2, help="Seconds each push is held.")
 parser.add_argument("--phase_duration", type=float, default=10.0, help="Duration of each phase in seconds.")
-parser.add_argument("--push_forces", type=float, nargs="+", default=[0, 100, 200, 300],
-                    help="Force (N) per phase. Phase 0 is always rest. Default: 0 100 200 300.")
+parser.add_argument("--push_forces", type=float, nargs="+", default=[0, 100, 170, 260],
+                    help="Force (N) per phase. Phase 0 is always rest. Default: 0 100 170 260.")
 parser.add_argument("--push_seed", type=int, default=None)
 parser.add_argument(
     "--phase_vel_x", type=float, nargs="+", default=None,

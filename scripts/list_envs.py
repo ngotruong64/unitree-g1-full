@@ -58,9 +58,12 @@ def _walk_packages(
 
 def import_packages():
     sys.path.insert(0, f"{pathlib.Path(__file__).parent.parent}/source/unitree_rl_lab/unitree_rl_lab/tasks/")
-    for package in ["locomotion.robots", "mimic.robots"]:
-        package = importlib.import_module(package)
-        for _ in _walk_packages(package.__path__, package.__name__ + "."):
+    for package_name in ["locomotion.robots", "mimic.robots"]:
+        try:
+            package = importlib.import_module(package_name)
+            for _ in _walk_packages(package.__path__, package.__name__ + "."):
+                pass
+        except ModuleNotFoundError:
             pass
     sys.path.pop(0)
 
