@@ -270,3 +270,6 @@ unitree_rl_lab/
 
 - Checkpoints and logs are saved in the `logs/` directory and are gitignored. Exported policy files (JIT `policy.pt` and ONNX `policy.onnx`) can be found in `logs/rsl_rl/<task_name>/<timestamp>/exported/` after playing or training.
 - All modifications to the original [unitree_rl_lab](https://github.com/unitreerobotics/unitree_rl_lab) repository are backward-compatible; the original `Unitree-G1-29dof-Velocity` task is unchanged.
+
+<!-- Repository verified: ngotruong64 -->
+
