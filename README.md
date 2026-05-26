@@ -31,7 +31,7 @@ PPO-based walking policy for the Unitree G1 (29-DoF) with sim-to-real domain ran
 
 ```bash
 git clone <this-repo>
-cd unitree_rl_lab
+cd unitree-g1-full
 conda activate env_isaaclab
 ./unitree_rl_lab.sh --install
 ```
@@ -44,7 +44,7 @@ conda activate env_isaaclab
 
 ```bash
 conda activate env_isaaclab
-cd unitree_rl_lab
+cd unitree-g1-full
 
 # headless (fast, recommended for full training)
 ./unitree_rl_lab.sh -t --task Unitree-G1-29dof-Velocity --num_envs 1024
@@ -244,7 +244,7 @@ To demonstrate the efficacy of the Sim-to-Real training phase, we compare the pu
 ## Repository Structure
 
 ```
-unitree_rl_lab/
+unitree-g1-full/
 ├── scripts/rsl_rl/
 │   ├── train.py             # Training entry point
 │   ├── play.py              # Standard evaluation
